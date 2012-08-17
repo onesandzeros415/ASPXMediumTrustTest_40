@@ -1,0 +1,37 @@
+﻿ASPXMediumTrustTest
+
+=====
+
+Installation
+-----------
+
+	Installation instructions:
+
+	1. Download zip file above.
+	2. Upload just default.aspx to the web root of your web site via FTP.
+	3. Browse to the file location in browser: i.e http://www.yourdomain.com/default.aspx
+	
+Usage
+-----
+
+	This test will allow you to verify whether you have setup correct permissions in your medium trust environment.  
+	In addition most shared hosting providers only provide medium trust however some may or may not provide access 
+	to System.IO. This script will help you to easily identify this.
+
+
+Updating
+------------
+
+	To update to the lastest version simply re-install using instructions above
+
+License
+------------
+
+	By installing ASPXMediumTrustTest you agree that this feature is an Unsupported Service 
+	(as defined herein) and you also agree to the terms of the GPL License! 
+	See: GPL v3 -- http://www.gnu.org/licenses/gpl-3.0.en.html
+
+
+	If you use this tool you agree that the tool is an “Test Script”.  I make no representation 
+	or warranty whatsoever regarding any Test Script, and you agree that I will not be liable 
+	to you for any loss or damage arising from utilizing this Test Script.  
