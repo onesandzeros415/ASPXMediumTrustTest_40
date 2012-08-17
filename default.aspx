@@ -608,7 +608,7 @@
                     </tr>
                     <tr>
                         <td valign="top">
-                            <font face="Verdana" size="2">Comments:</font>
+                            Comments:
                         </td>
                         <td style="height: 112px;">
                             <asp:TextBox runat="server" Height="107px" TextMode="MultiLine" Width="206px" ID="txtComments"></asp:TextBox>
