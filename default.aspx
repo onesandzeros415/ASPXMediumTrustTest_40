@@ -10,25 +10,31 @@
 <%@ Import Namespace="System.Web" %>
 <%@ Import Namespace="System.Web.UI" %>
 <%@ Import Namespace="System.Web.UI.WebControls" %>
+<%@ Import Namespace="System.Text" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
 <script runat="server">
     protected void Page_Load(object sender, EventArgs e)
     {
-        //Code by Matthew Costello, 08/2011 http://www.mrcostello.com 
-        string path = Path.Combine(Server.MapPath("~/temp"));
-
-        if (Directory.Exists(path))
+        try
         {
-            GetFiles();
+            //Test Code by Matthew Costello : 08/2011 http://www.mrcostello.com
+            //Revised : 09/2014
+
+            string path = Path.Combine(Server.MapPath("~/temp"));
+
+            if (Directory.Exists(path))
+            {
+                getFiles();
+            }
         }
-        else if (!Directory.Exists(path))
+        catch (Exception ex)
         {
-
+            lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btnmakedir_Click(object sender, EventArgs e)
+    protected void btnMakeDirectory_Click(object sender, EventArgs e)
     {
         string path = Path.Combine(Server.MapPath("~/temp"));
 
@@ -52,7 +58,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btndeletedir_Click(object sender, EventArgs e)
+    protected void btnDeleteDirectory_Click(object sender, EventArgs e)
     {
         string path = Path.Combine(Server.MapPath("~/temp"));
 
@@ -77,7 +83,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btncreatetext_Click(object sender, EventArgs e)
+    protected void btnCreateTextFile_Click(object sender, EventArgs e)
     {
         try
         {
@@ -91,7 +97,7 @@
                     File.WriteAllText(path + "\\WriteText.txt", text);
                     lblInfo.Text = "Successfully Created WriteText.txt at : <br />" + path + "<br />" + Directory.GetCreationTime(path);
 
-                    GetFiles();
+                    getFiles();
                 }
                 else if (File.Exists(path + "\\WriteText.txt"))
                 {
@@ -108,7 +114,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btndeletetext_Click(object sender, EventArgs e)
+    protected void btnDeleteText_Click(object sender, EventArgs e)
     {
         string path = Path.Combine(Server.MapPath("~/" + "temp\\WriteText.txt"));
 
@@ -119,7 +125,7 @@
                 File.Delete(path);
                 lblInfo.Text = "The file was deleted successfully.";
 
-                GetFiles();
+                getFiles();
             }
             else if (!File.Exists(path))
             {
@@ -150,7 +156,7 @@
 
                     imagePrint();
 
-                    GetFiles();
+                    getFiles();
                 }
                 else
                 {
@@ -175,7 +181,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btnupdatefilelist_Click(object sender, EventArgs e)
+    protected void btnUpdateFileList_Click(object sender, EventArgs e)
     {
         string path = Path.Combine(Server.MapPath("~/temp"));
 
@@ -184,7 +190,7 @@
             if (Directory.Exists(path))
             {
                 imagePrint();
-                GetFiles();
+                getFiles();
             }
             else if (!Directory.Exists(path))
             {
@@ -196,7 +202,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btndeletefile_Click(object sender, EventArgs e)
+    protected void btnDeleteFile_Click(object sender, EventArgs e)
     {
         string path = this.ddl2.Text.ToString();
         try
@@ -207,7 +213,7 @@
                 lblInfo.Text = "The file was deleted successfully.";
 
                 imagePrint();
-                GetFiles();
+                getFiles();
             }
             else if (!Directory.Exists(path))
             {
@@ -223,13 +229,13 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    protected void btnpwd_Click(object sender, EventArgs e)
+    protected void btnPwd_Click(object sender, EventArgs e)
     {
-        string path = Server.MapPath(".") + "\\temp";
+        string path = Server.MapPath(".");
 
         lblIPHost.Text = path.ToString();
     }
-    public void GetFiles()
+    protected void getFiles()
     {
         //string dir = this.ddl1.Text;
         //string windows = @ConfigurationManager.AppSettings["ServerDirectory"];
@@ -249,7 +255,7 @@
             lblInfo.Text = "The following failed: <br /> <br />" + ex.ToString();
         }
     }
-    public void imagePrint()
+    protected void imagePrint()
     {
         string[] filesindirectory = Directory.GetFiles(Server.MapPath("~/temp"));
         List<String> images = new List<string>(filesindirectory.Count());
@@ -262,7 +268,7 @@
         RepeaterImages.DataSource = images;
         RepeaterImages.DataBind();
     }
-    protected void btniphost_Click(object sender, EventArgs e)
+    protected void btnGetIpHostDetails_Click(object sender, EventArgs e)
     {
         string host = Environment.MachineName;
 
@@ -291,11 +297,12 @@
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
+            lblIPHost.Text = ex.ToString();
         }
     }
-    void btnSubmit_Click(Object sender, EventArgs e)
+    protected void btnSubmit_Click(Object sender, EventArgs e)
     {
         try
         {
@@ -354,7 +361,7 @@
             lblsmtpinfo.Text = "Send failure: " + exc.ToString();
         }
     }
-    void btnSubmit_sql_Click(Object sender, EventArgs e)
+    protected void btnSqlCheck_Click(Object sender, EventArgs e)
     {
         try
         {
@@ -384,6 +391,44 @@
             lblsqlinfo.Text = "Trouble Connecting to MSSQL: " + exc.ToString();
         }
     }
+    protected void btnGetMemoryUsage_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            lblIPHost.Text = "Total Memory: " + GC.GetTotalMemory(false) / 1048576 + "MB<br/>";
+        }
+        catch (Exception ex)
+        {
+            lblIPHost.Text = "The following failed: <br /> <br />" + ex.ToString();
+        }
+    }
+    protected void btnDirectoryListing_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            StringBuilder dirList = new StringBuilder();
+            string path = Path.Combine(Server.MapPath("~/"));
+
+            var directories = Directory.GetDirectories(path);
+
+            if (directories.Count() > 0)
+            {
+
+                foreach (var dir in directories)
+                { dirList.AppendLine(dir + "<br />"); }
+
+                lblIPHost.Text = dirList.ToString();
+            }
+            else
+            {
+                lblIPHost.Text = "There are no sub directories.";
+            }
+        }
+        catch (Exception ex)
+        {
+            lblIPHost.Text = "The following failed: <br /> <br />" + ex.ToString();
+        }
+    }
 </script>
 <head id="Head1" runat="server">
     <title>ASP.NET 4.0 Test!</title>
@@ -403,70 +448,75 @@
             <br />
             For Rackspace CloudSites Customers:<br />
             <br />
-            Please make sure that <a href="http://www.rackspace.com/knowledge_center/index.php/How_do_I_add_impersonation_to_my_ASP.NET_site" target="_blank">impersonation </a> is enabled via web.config in the system.Web element:
+            Please make sure that <a href="http://www.rackspace.com/knowledge_center/index.php/How_do_I_add_impersonation_to_my_ASP.NET_site" target="_blank">impersonation </a>is enabled via web.config in the system.Web element:
         <br />
-                <br />
-                &lt;identity impersonate="true" username="ord\USERNAME" password="PASSWORD" /&gt;
+            <br />
+            &lt;identity impersonate="true" username="ord\USERNAME" password="PASSWORD" /&gt;
         
         <br />
-                &lt;identity impersonate="true" username="dfw\USERNAME" password="PASSWORD" /&gt;
+            &lt;identity impersonate="true" username="dfw\USERNAME" password="PASSWORD" /&gt;
         <br />
-                <br />
-                This TEST will only work on with .NET 4.0<br />
-                <br />
-                Instructions:
+            <br />
+            This TEST will only work on with .NET 4.0<br />
+            <br />
+            Instructions:
         
         <br />
-                Step 1. Make directory
+            Step 1. Make directory
         <br />
-                Step 2. Make text file
+            Step 2. Make text file
         <br />
-                Step 3. Delete text file
+            Step 3. Delete text file
         <br />
-                Step 4. Delete Directory
+            Step 4. Delete Directory
         <br />
-                <br />
-                If uploading:
+            <br />
+            If uploading:
         <br />
-                Step 1. Make directory
+            Step 1. Make directory
         <br />
-                Step 2. Upload file.<br />
+            Step 2. Upload file.<br />
+            <br />
+            <asp:Label runat="server" ID="lblInfo" ForeColor="Red" Text="" />
+            <br />
+            <br />
+            <asp:Button runat="server" ID="btnmakedir" OnClick="btnMakeDirectory_Click" Text="Make Temp Directory" />
+            <asp:Button runat="server" ID="btndeletedir" OnClick="btnDeleteDirectory_Click" OnClientClick="window.location.reload();"
+                Text="Delete Temp Directory" />
+            <asp:Button runat="server" ID="btncreatetext" OnClick="btnCreateTextFile_Click" Text="Create Text File" />
+            <asp:Button runat="server" ID="btndeletetext" OnClick="btnDeleteText_Click" Text="Delete Text File" />
+            <br />
+            <br />
+            <div>
+                <asp:FileUpload ID="FileUpload1" runat="server" />
+                <asp:Button ID="btnUpload" runat="server" Text="Upload" OnClick="btnUpload_Click" />
                 <br />
-                <asp:Label runat="server" ID="lblInfo" ForeColor="Red" Text="" />
-                <br />
-                <br />
-                <asp:Button runat="server" ID="btnmakedir" OnClick="btnmakedir_Click" Text="Make Temp Directory" />
-                <asp:Button runat="server" ID="btndeletedir" OnClick="btndeletedir_Click" OnClientClick="window.location.reload();"
-                    Text="Delete Temp Directory" />
-                <asp:Button runat="server" ID="btncreatetext" OnClick="btncreatetext_Click" Text="Create Text File" />
-                <asp:Button runat="server" ID="btndeletetext" OnClick="btndeletetext_Click" Text="Delete Text File" />
-                <br />
-                <br />
-                <div>
-                    <asp:FileUpload ID="FileUpload1" runat="server" />
-                    <asp:Button ID="btnUpload" runat="server" Text="Upload" OnClick="btnUpload_Click" />
-                    <br />
-                </div>
-                <br />
-                <br />
-                <br />
-                Files:
+            </div>
+            <br />
+            <br />
+            <br />
+            Files:
         <asp:DropDownList ID="ddl2" runat="server" />
-                <br />
-                <br />
-                <asp:Button runat="server" ID="btnupdatefilelist" OnClick="btnupdatefilelist_Click"
-                    Text="Manually Update File List" />
-                <br />
-                <asp:Button runat="server" ID="btndeletefile" OnClick="btndeletefile_Click" Text="Delete File" />
-                <br />
-                <br />
-                <asp:Label runat="server" ID="lblIPHost" ForeColor="Red" Text="" />
-                <br />
-                <br />
-                <asp:Button runat="server" ID="pwd" OnClick="btnpwd_Click" Text="PWD" />
-                <br />
-                <asp:Button runat="server" ID="btniphost" OnClick="btniphost_Click" Text="Get Local IP and Hostname" />
-                <br />
+            <br />
+            <br />
+            <asp:Button runat="server" ID="btnupdatefilelist" OnClick="btnUpdateFileList_Click"
+                Text="Manually Update File List" />
+            <br />
+            <asp:Button runat="server" ID="btndeletefile" OnClick="btnDeleteFile_Click" Text="Delete File" />
+            <br />
+            <br />
+            <asp:Label runat="server" ID="lblIPHost" ForeColor="Red" Text="" />
+            <br />
+            <br />
+            <asp:Button runat="server" ID="pwd" OnClick="btnPwd_Click" Text="PWD" />
+            <br />
+            <asp:Button runat="server" ID="btniphost" OnClick="btnGetIpHostDetails_Click" Text="Get Local IP and Hostname" />
+            <br />
+            <asp:Button runat="server" ID="btnGetMemoryUsuage" OnClick="btnGetMemoryUsage_Click" Text="Get Memory Usage" />
+            <br />
+            <asp:Button runat="server" ID="btnListDirectories" OnClick="btnDirectoryListing_Click" Text="List Directories" />
+            <br />
+            <br />
         </div>
         <div style="text-align: center;">
             <br />
@@ -540,7 +590,7 @@
             <asp:Label runat="server" ID="lblsqlinfo" ForeColor="Red" Text="" />
             <br />
             <br />
-            <asp:Button runat="server" ID="sqlbtn" OnClick="btnSubmit_sql_Click" Text="Retrieve Info">
+            <asp:Button runat="server" ID="sqlbtn" OnClick="btnSqlCheck_Click" Text="Retrieve Info">
             </asp:Button>
         </center>
             <br />
@@ -607,8 +657,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td valign="top">
-                            Comments:
+                        <td valign="top">Comments:
                         </td>
                         <td style="height: 112px;">
                             <asp:TextBox runat="server" Height="107px" TextMode="MultiLine" Width="206px" ID="txtComments"></asp:TextBox>
